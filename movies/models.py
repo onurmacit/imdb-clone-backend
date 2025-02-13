@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.core.exceptions import ValidationError
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
@@ -29,6 +31,14 @@ class CustomUser(AbstractBaseUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
+
+    def clean(self):
+
+        if not self.username.isalpha():
+            raise ValidationError("Username must contain only letters.")
+
+        if '@example.com' not in self.email:
+            raise ValidationError("Email must be from 'example.com' domain.")
 
     def __str__(self):
         return self.username
