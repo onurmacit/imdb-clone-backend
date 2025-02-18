@@ -36,7 +36,8 @@ jobs:
           echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}" >> .env
 
       - name: Start Docker Compose environment
-        run: docker-compose up -d
+        run: docker-compose up -d --scale celery=0
+
 
       - name: Wait for PostgreSQL to be ready
         run: |
