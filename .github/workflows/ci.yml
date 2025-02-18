@@ -1,0 +1,41 @@
+name: Django CI with Docker Compose
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    name: Run Tests using Docker Compose
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Start Docker Compose environment
+        run: docker-compose up -d
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          echo "Waiting for PostgreSQL to be ready..."
+          sleep 10
+          until docker-compose exec db pg_isready -U postgres; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+
+      - name: Run Migrations
+        run: docker-compose exec web python manage.py migrate
+
+      - name: Run Tests
+        run: docker-compose exec web pytest
+
+      - name: Shut Down Docker Compose Environment
+        run: docker-compose down
