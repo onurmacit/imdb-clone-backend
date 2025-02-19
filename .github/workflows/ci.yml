@@ -40,16 +40,17 @@ jobs:
           echo "CELERY_TASK_ALWAYS_EAGER=${CELERY_TASK_ALWAYS_EAGER}" >> .env
 
       - name: Start Docker Compose environment
-        run: docker-compose up -d --scale celery=0
+        run: docker compose up -d --scale celery=0
 
       - name: Wait for PostgreSQL to be ready
-        run: docker-compose run --rm web bash -c "until pg_isready -h db -p 5432 -U $DB_USER; do sleep 2; done"
+        run: docker compose run --rm web bash -c "until pg_isready -h db -p 5432 -U $DB_USER; do sleep 2; done"
 
       - name: Run Migrations
-        run: docker-compose run --rm web python manage.py migrate
+        run: docker compose run --rm web python manage.py migrate
 
       - name: Run Tests
-        run: docker-compose run --rm web pytest
+        run: docker compose run --rm web pytest
 
       - name: Shut Down Docker Compose Environment
-        run: docker-compose down
+        run: docker compose down
+
