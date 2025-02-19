@@ -50,4 +50,4 @@ jobs:
           DB_HOST: localhost
           DB_PORT: 5432
         run: |
-          python manage.py test
+          yes "yes" | python manage.py test  # Auto-confirm database deletion
