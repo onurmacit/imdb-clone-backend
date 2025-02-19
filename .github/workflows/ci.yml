@@ -43,5 +43,6 @@ jobs:
       - name: Run Tests
         env:
           DJANGO_SETTINGS_MODULE: imdb_clone.test_settings
+          SECRET_KEY: django-test-key-123-for-ci
         run: |
           python manage.py test
