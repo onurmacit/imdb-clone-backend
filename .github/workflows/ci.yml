@@ -49,6 +49,7 @@ jobs:
       - name: Run tests
         run: |
           python -m pytest
+
       - name: Build Docker image
         run: |
           docker build -t myapp .
@@ -56,4 +57,3 @@ jobs:
       - name: Run Docker container
         run: |
           docker run -d -p 8000:8000 myapp
-
