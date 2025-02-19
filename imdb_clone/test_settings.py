@@ -1,14 +1,17 @@
 from .settings import *  
 import os
+import getpass
+
+current_user = getpass.getuser()  
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'test_imdb',  
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
-        'HOST': os.getenv('DB_HOST', 'db'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'USER': current_user,  
+        'PASSWORD': '',  
+        'HOST': 'localhost',
+        'PORT': '5432',
         'TEST': {
             'NAME': 'test_imdb',  
         },
