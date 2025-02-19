@@ -2,18 +2,23 @@ name: Django CI with Docker Compose
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [ main, develop ]
   pull_request:
-    branches:
-      - main
-      - develop
+    branches: [ main, develop ]
 
 jobs:
   test:
     name: Run Tests using Docker Compose
     runs-on: ubuntu-latest
+
+    env:
+      DB_NAME: ${{ secrets.DB_NAME || 'imdb_test' }}
+      DB_USER: ${{ secrets.DB_USER || 'postgres' }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD || 'postgres' }}
+      DB_HOST: ${{ secrets.DB_HOST || 'db' }}
+      DB_PORT: ${{ secrets.DB_PORT || '5432' }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY || 'test-key-123' }}
+      CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL || 'redis://redis:6379/0' }}
 
     steps:
       - name: Checkout repository
@@ -27,32 +32,31 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "DB_NAME=${{ secrets.DB_NAME }}" > .env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-          echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}" >> .env
+          echo "DB_NAME=${DB_NAME}" > .env
+          echo "DB_USER=${DB_USER}" >> .env
+          echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
+          echo "DB_HOST=${DB_HOST}" >> .env
+          echo "DB_PORT=${DB_PORT}" >> .env
+          echo "SECRET_KEY=${SECRET_KEY}" >> .env
+          echo "CELERY_BROKER_URL=${CELERY_BROKER_URL}" >> .env
 
       - name: Start Docker Compose environment
-        run: docker-compose up -d web db
-
+        run: docker-compose up -d --scale celery=0
 
       - name: Wait for PostgreSQL to be ready
         run: |
           echo "Waiting for PostgreSQL to be ready..."
           sleep 10
-          until docker-compose exec db pg_isready -U postgres; do
+          until docker-compose exec -T db pg_isready -U $DB_USER; do
             echo "Waiting for PostgreSQL..."
             sleep 2
           done
 
       - name: Run Migrations
-        run: docker-compose exec web python manage.py migrate
+        run: docker-compose exec -T web python manage.py migrate
 
       - name: Run Tests
-        run: docker-compose exec web pytest
+        run: docker-compose exec -T web pytest
 
       - name: Shut Down Docker Compose Environment
         run: docker-compose down
