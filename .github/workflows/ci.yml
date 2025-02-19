@@ -39,8 +39,11 @@ jobs:
           echo "CELERY_BROKER_URL=${CELERY_BROKER_URL}" >> .env
           echo "CELERY_TASK_ALWAYS_EAGER=${CELERY_TASK_ALWAYS_EAGER}" >> .env
 
-      - name: Start Docker Compose environment
-        run: docker compose up -d --scale celery=0
+      - name: Start Web Server
+        run: docker-compose run --rm web web
+        
+      - name: Start Celery Worker
+        run: docker-compose run --rm celery celery
 
       - name: Wait for PostgreSQL to be ready
         run: docker compose run --rm web bash -c "until pg_isready -h db -p 5432 -U $DB_USER; do sleep 2; done"
