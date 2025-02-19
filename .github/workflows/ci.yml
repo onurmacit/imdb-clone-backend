@@ -16,9 +16,9 @@ jobs:
       postgres:
         image: postgres:13
         env:
+          POSTGRES_DB: test_imdb
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_imdb
         ports:
           - 5432:5432
         options: >-
@@ -44,5 +44,10 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: imdb_clone.test_settings
           SECRET_KEY: django-test-key-123-for-ci
+          POSTGRES_DB: test_imdb
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          DB_HOST: localhost
+          DB_PORT: 5432
         run: |
           python manage.py test
