@@ -16,9 +16,9 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_DB: test_imdb
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ${{ secrets.TEST_DB_NAME }}
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
         ports:
           - 5432:5432
         options: >-
@@ -43,11 +43,12 @@ jobs:
       - name: Run Tests
         env:
           DJANGO_SETTINGS_MODULE: imdb_clone.test_settings
-          SECRET_KEY: django-test-key-123-for-ci
-          POSTGRES_DB: test_imdb
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DB_NAME: ${{ secrets.TEST_DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_HOST: localhost
           DB_PORT: 5432
+          CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL }}
         run: |
-          yes "yes" | python manage.py test  # Auto-confirm database deletion
+          yes "yes" | python manage.py test
