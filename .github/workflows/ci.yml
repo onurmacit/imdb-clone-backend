@@ -54,7 +54,6 @@ jobs:
       - name: Run Tests
         env:
           DJANGO_SETTINGS_MODULE: imdb_clone.test_settings
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DB_NAME: ${{ secrets.TEST_DB_NAME }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}

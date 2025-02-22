@@ -1,5 +1,7 @@
 import os
 
+SECRET_KEY = "django-test-key-123-for-ci"
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
