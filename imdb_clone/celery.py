@@ -1,11 +1,13 @@
 from __future__ import absolute_import, unicode_literals
+
 import os
+
 from celery import Celery
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'imdb_clone.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "imdb_clone.settings")
 
-app = Celery('imdb_clone')
+app = Celery("imdb_clone")
 
-app.config_from_object('django.conf:settings', namespace='CELERY')
+app.config_from_object("django.conf:settings", namespace="CELERY")
 
 app.autodiscover_tasks()
