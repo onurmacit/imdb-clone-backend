@@ -16,9 +16,9 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_DB: ${{ secrets.TEST_DB_NAME }}
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: test_db
+          POSTGRES_USER: ${{ secrets.DB_USER || 'postgres' }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD || 'postgres' }}
         ports:
           - 5432:5432
         options: >-
@@ -48,17 +48,24 @@ jobs:
           done
 
       - name: Apply database migrations
+        env:
+          DJANGO_SETTINGS_MODULE: imdb_clone.test_settings
+          DB_NAME: ${{ secrets.DB_NAME || 'test_db' }}
+          DB_USER: ${{ secrets.DB_USER || 'postgres' }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD || 'postgres' }}
+          DB_HOST: localhost
+          DB_PORT: 5432
         run: |
           python manage.py migrate
           
       - name: Run Tests
         env:
           DJANGO_SETTINGS_MODULE: imdb_clone.test_settings
-          DB_NAME: ${{ secrets.TEST_DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME || 'test_db' }}
+          DB_USER: ${{ secrets.DB_USER || 'postgres' }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD || 'postgres' }}
           DB_HOST: localhost
           DB_PORT: 5432
-          CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL }}
+          CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL || 'redis://localhost:6379/0' }}
         run: |
           yes "yes" | python manage.py test
