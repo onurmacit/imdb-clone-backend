@@ -49,7 +49,7 @@ jobs:
 
       - name: Create test database
         run: |
-          PGPASSWORD=${{ secrets.DB_PASSWORD || 'postgres' }} psql -h localhost -U postgres -c "CREATE DATABASE test_db;"
+          PGPASSWORD=${{ secrets.DB_PASSWORD || 'postgres' }} createdb -h localhost -U postgres test_db || true
 
       - name: Apply database migrations
         env:
