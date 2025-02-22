@@ -1,6 +1,6 @@
-from .settings import *  # noqa: F403, F401
-
 import os
+
+from .settings import *  # noqa: F403, F401
 
 SECRET_KEY = "django-test-key-123-for-ci"
 

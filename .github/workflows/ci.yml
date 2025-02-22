@@ -16,7 +16,7 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_DB: test_db
+          POSTGRES_DB: postgres
           POSTGRES_USER: ${{ secrets.DB_USER || 'postgres' }}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD || 'postgres' }}
         ports:
@@ -47,10 +47,14 @@ jobs:
             sleep 1
           done
 
+      - name: Create test database
+        run: |
+          PGPASSWORD=${{ secrets.DB_PASSWORD || 'postgres' }} psql -h localhost -U postgres -c "CREATE DATABASE test_db;"
+
       - name: Apply database migrations
         env:
           DJANGO_SETTINGS_MODULE: imdb_clone.test_settings
-          DB_NAME: ${{ secrets.DB_NAME || 'test_db' }}
+          DB_NAME: test_db
           DB_USER: ${{ secrets.DB_USER || 'postgres' }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD || 'postgres' }}
           DB_HOST: localhost
@@ -61,7 +65,7 @@ jobs:
       - name: Run Tests
         env:
           DJANGO_SETTINGS_MODULE: imdb_clone.test_settings
-          DB_NAME: ${{ secrets.DB_NAME || 'test_db' }}
+          DB_NAME: test_db
           DB_USER: ${{ secrets.DB_USER || 'postgres' }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD || 'postgres' }}
           DB_HOST: localhost
