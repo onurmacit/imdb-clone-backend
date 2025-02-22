@@ -1,15 +1,19 @@
 import os
 
+from .settings import *  # noqa: F403, F401
+
+SECRET_KEY = "django-test-key-123-for-ci"
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "test_imdb",
+        "NAME": "test_db",
         "USER": "postgres",
         "PASSWORD": "postgres",
         "HOST": "localhost",
         "PORT": "5432",
         "TEST": {
-            "NAME": "test_imdb",
+            "NAME": "test_db",
         },
     }
 }
