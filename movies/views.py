@@ -1,10 +1,13 @@
+from django.core.cache import cache
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .serializers import RegisterSerializer
+from .models import Movie
+from .serializers import MovieSerializer, RegisterSerializer
+from .throttles import CustomMovieThrottle
 
 
 class RegisterView(APIView):
@@ -23,3 +26,27 @@ class RegisterView(APIView):
                 status=status.HTTP_201_CREATED,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MovieListView(APIView):
+    throttle_classes = [CustomMovieThrottle]
+
+    def get(self, request):
+        cache_key = "movie_list"
+        cached_data = cache.get(cache_key)
+
+        if cached_data:
+            return Response(cached_data)
+
+        movies = Movie.objects.all()
+        serializer = MovieSerializer(movies, many=True)
+        cache.set(cache_key, serializer.data, timeout=60)
+
+        return Response(serializer.data)
+
+
+class MovieDetailView(APIView):
+    throttle_classes = [CustomMovieThrottle]
+
+    def get(self, request, pk):
+        return Response({"message": f"Movie {pk} details"})
