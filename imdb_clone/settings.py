@@ -14,6 +14,9 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+import cloudinary
+import cloudinary.api
+import cloudinary.uploader
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -48,6 +51,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "corsheaders",
+    "cloudinary",
 ]
 
 REST_FRAMEWORK = {
@@ -168,6 +172,15 @@ USE_I18N = True
 
 USE_TZ = True
 
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True,
+)
+
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+MEDIA_URL = cloudinary.utils.cloudinary_url("")[0]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

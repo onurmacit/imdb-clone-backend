@@ -1,12 +1,12 @@
 from django.core.cache import cache
-from rest_framework import status
+from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Movie
-from .serializers import MovieSerializer, RegisterSerializer
+from .models import Category, Movie
+from .serializers import CategorySerializer, MovieSerializer, RegisterSerializer
 from .throttles import CustomMovieThrottle
 
 
@@ -50,3 +50,8 @@ class MovieDetailView(APIView):
 
     def get(self, request, pk):
         return Response({"message": f"Movie {pk} details"})
+
+
+class CategoryListCreateView(generics.ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
