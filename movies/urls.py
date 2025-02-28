@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from .views import MovieDetailView, MovieListView, RegisterView, CategoryListCreateView
+from .views import CategoryListCreateView, MovieDetailView, MovieListView, RegisterView
 
 urlpatterns = [
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
@@ -12,5 +12,7 @@ urlpatterns = [
     path("api/register/", RegisterView.as_view(), name="register"),
     path("api/movie_list", MovieDetailView.as_view(), name="movie-list"),
     path("api/movie_detail", MovieListView.as_view(), name="movie-detail"),
-    path("api/category_create", CategoryListCreateView.as_view(), name="category-create"),
+    path(
+        "api/category_create", CategoryListCreateView.as_view(), name="category-create"
+    ),
 ]

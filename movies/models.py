@@ -1,6 +1,6 @@
+from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.exceptions import ValidationError
-from cloudinary.models import CloudinaryField
 from django.db import models
 
 
@@ -59,11 +59,11 @@ class Movie(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
     cover_image = CloudinaryField(
-        'image',
+        "image",
         blank=True,
         null=True,
-        folder='categories/', 
-        default="default-category-cover.jpg"  
+        folder="categories/",
+        default="default-category-cover.jpg",
     )
 
     def __str__(self):

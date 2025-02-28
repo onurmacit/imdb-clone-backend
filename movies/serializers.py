@@ -1,6 +1,7 @@
-from rest_framework import serializers
 import cloudinary
-from .models import CustomUser, Movie, Category
+from rest_framework import serializers
+
+from .models import Category, CustomUser, Movie
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -41,9 +42,11 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'cover_image', 'cover_image_url']
+        fields = ["id", "name", "cover_image", "cover_image_url"]
 
     def get_cover_image_url(self, obj):
         if obj.cover_image:
-            return cloudinary.utils.cloudinary_url(obj.cover_image.public_id, format="jpg", quality="auto", secure=True)[0]
+            return cloudinary.utils.cloudinary_url(
+                obj.cover_image.public_id, format="jpg", quality="auto", secure=True
+            )[0]
         return None
