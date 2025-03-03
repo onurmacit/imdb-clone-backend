@@ -1,5 +1,6 @@
 import base64
 import uuid
+
 from cloudinary.uploader import upload
 from django.core.files.base import ContentFile
 
