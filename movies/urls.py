@@ -4,7 +4,13 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from .views import AddCategory, MovieDetailView, MovieListView, RegisterView, AddCategoryCover
+from .views import (
+    AddCategory,
+    AddCategoryCover,
+    MovieDetailView,
+    MovieListView,
+    RegisterView,
+)
 
 urlpatterns = [
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),

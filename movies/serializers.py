@@ -1,4 +1,5 @@
 import base64
+
 from rest_framework import serializers
 
 from .models import Category, CustomUser, Movie
@@ -40,7 +41,8 @@ class MovieSerializer(serializers.ModelSerializer):
 class CreateCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['name']
+        fields = ["name"]
+
 
 class CreateCategoryCoverSerializer(serializers.Serializer):
     category_id = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
@@ -49,6 +51,6 @@ class CreateCategoryCoverSerializer(serializers.Serializer):
     def validate_cover_base64(self, value):
         try:
             base64.b64decode(value)
-        except Exception as e:
+        except Exception:
             raise serializers.ValidationError("Invalid base64 content.")
         return value

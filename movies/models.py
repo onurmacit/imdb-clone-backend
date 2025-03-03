@@ -1,7 +1,7 @@
+from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.exceptions import ValidationError
 from django.db import models
-from cloudinary.models import CloudinaryField
 
 
 class CustomUserManager(BaseUserManager):
@@ -58,7 +58,7 @@ class Movie(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
-    cover_url = CloudinaryField('category_covers', null=True, blank=True)
+    cover_url = CloudinaryField("category_covers", null=True, blank=True)
 
     def __str__(self):
         return self.name
