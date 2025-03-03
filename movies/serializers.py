@@ -1,4 +1,4 @@
-import cloudinary
+import base64
 from rest_framework import serializers
 
 from .models import Category, CustomUser, Movie
@@ -37,16 +37,18 @@ class MovieSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CategorySerializer(serializers.ModelSerializer):
-    cover_image_url = serializers.SerializerMethodField()
-
+class CreateCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ["id", "name", "cover_image", "cover_image_url"]
+        fields = ['name']
 
-    def get_cover_image_url(self, obj):
-        if obj.cover_image:
-            return cloudinary.utils.cloudinary_url(
-                obj.cover_image.public_id, format="jpg", quality="auto", secure=True
-            )[0]
-        return None
+class CreateCategoryCoverSerializer(serializers.Serializer):
+    category_id = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    cover_base64 = serializers.CharField()
+
+    def validate_cover_base64(self, value):
+        try:
+            base64.b64decode(value)
+        except Exception as e:
+            raise serializers.ValidationError("Invalid base64 content.")
+        return value
