@@ -1,35 +1,56 @@
 import base64
-
 from rest_framework import serializers
-
 from .models import Category, CustomUser, Movie
+from django.contrib.auth.password_validation import validate_password
+from rest_framework.validators import UniqueValidator
+from django.contrib.auth import authenticate
+
 
 
 class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only=True, required=True, style={'input_type': 'password'}
+    )
+    password2 = serializers.CharField(
+        write_only=True, required=True, style={'input_type': 'password'}
+    )
+
     class Meta:
         model = CustomUser
-        fields = ("email", "username", "password")
-        extra_kwargs = {"password": {"write_only": True}}
+        fields = ['username', 'email', 'password', 'password2']
+        extra_kwargs = {
+            'email': {
+                'required': True,
+                'validators': [UniqueValidator(queryset=CustomUser.objects.all(), message="This email address is already in use.")]
+            }
+        }
 
-    def validate_email(self, value):
-        if "@example.com" not in value:
-            raise serializers.ValidationError(
-                "Email must be from 'example.com' domain."
-            )
-        return value
+    def validate(self, data):
+        if data['password'] != data.pop('password2'):
+            raise serializers.ValidationError({"password": "Passwords do not match."})
 
-    def validate_username(self, value):
-        if not value.isalpha():
-            raise serializers.ValidationError("Username must contain only letters.")
-        return value
+        validate_password(data['password'])  
+        return data
 
     def create(self, validated_data):
-        user = CustomUser.objects.create_user(
-            email=validated_data["email"],
-            username=validated_data["username"],
-            password=validated_data["password"],
-        )
-        return user
+        return CustomUser.objects.create_user(**validated_data)
+    
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+
+    def validate(self, data):
+        username = data.get('username')
+        password = data.get('password')
+        
+        user = authenticate(username=username, password=password)
+        
+        if user is None:
+            raise serializers.ValidationError("Invalid username or password.")
+        
+        data['user'] = user
+        return data
 
 
 class MovieSerializer(serializers.ModelSerializer):
