@@ -1,7 +1,15 @@
-from rest_framework.test import APITestCase
-from models import CustomUser, Category, Movie
-from serializers import RegisterSerializer, LoginSerializer, MovieSerializer, CreateCategorySerializer, CreateCategoryCoverSerializer
 import base64
+
+from models import Category, CustomUser, Movie
+from rest_framework.test import APITestCase
+from serializers import (
+    CreateCategoryCoverSerializer,
+    CreateCategorySerializer,
+    LoginSerializer,
+    MovieSerializer,
+    RegisterSerializer,
+)
+
 
 class SerializerTestCase(APITestCase):
 
@@ -11,24 +19,21 @@ class SerializerTestCase(APITestCase):
             "username": "testuser",
             "email": "testuser@example.com",
             "password": "securepassword123",
-            "password2": "securepassword123"
+            "password2": "securepassword123",
         }
-        
+
         self.user = CustomUser.objects.create_user(
-            username=self.user_data["username"], 
-            email=self.user_data["email"], 
-            password=self.user_data["password"]
+            username=self.user_data["username"],
+            email=self.user_data["email"],
+            password=self.user_data["password"],
         )
-        
+
         # Create a category for the category tests
         self.category_data = {"name": "Test Category"}
         self.category = Category.objects.create(**self.category_data)
 
         # Create a movie for movie serializer tests
-        self.movie_data = {
-            "title": "Test Movie",
-            "description": "A great movie"
-        }
+        self.movie_data = {"title": "Test Movie", "description": "A great movie"}
         self.movie = Movie.objects.create(**self.movie_data)
 
     def test_register_serializer_valid(self):
@@ -55,7 +60,7 @@ class SerializerTestCase(APITestCase):
     def test_login_serializer_valid(self):
         login_data = {
             "username": self.user_data["username"],
-            "password": self.user_data["password"]
+            "password": self.user_data["password"],
         }
         serializer = LoginSerializer(data=login_data)
         self.assertTrue(serializer.is_valid())
@@ -64,11 +69,13 @@ class SerializerTestCase(APITestCase):
     def test_login_serializer_invalid_credentials(self):
         login_data = {
             "username": self.user_data["username"],
-            "password": "wrongpassword"
+            "password": "wrongpassword",
         }
         serializer = LoginSerializer(data=login_data)
         self.assertFalse(serializer.is_valid())
-        self.assertEqual(serializer.errors["non_field_errors"][0], "Invalid username or password.")
+        self.assertEqual(
+            serializer.errors["non_field_errors"][0], "Invalid username or password."
+        )
 
     def test_movie_serializer(self):
         serializer = MovieSerializer(instance=self.movie)
@@ -85,17 +92,14 @@ class SerializerTestCase(APITestCase):
     def test_create_category_cover_serializer_valid(self):
         cover_data = {
             "category_id": self.category.id,
-            "cover_base64": base64.b64encode(b"dummydata").decode("utf-8")
+            "cover_base64": base64.b64encode(b"dummydata").decode("utf-8"),
         }
         serializer = CreateCategoryCoverSerializer(data=cover_data)
         self.assertTrue(serializer.is_valid())
         self.assertEqual(serializer.validated_data["category_id"], self.category.id)
 
     def test_create_category_cover_serializer_invalid_base64(self):
-        cover_data = {
-            "category_id": self.category.id,
-            "cover_base64": "invalidbase64"
-        }
+        cover_data = {"category_id": self.category.id, "cover_base64": "invalidbase64"}
         serializer = CreateCategoryCoverSerializer(data=cover_data)
         self.assertFalse(serializer.is_valid())
         self.assertIn("cover_base64", serializer.errors)

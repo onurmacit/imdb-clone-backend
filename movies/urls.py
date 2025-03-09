@@ -7,10 +7,10 @@ from rest_framework_simplejwt.views import (
 from .views import (
     AddCategory,
     AddCategoryCover,
+    LoginView,
     MovieDetailView,
     MovieListView,
     RegisterView,
-    LoginView
 )
 
 urlpatterns = [
