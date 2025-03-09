@@ -10,12 +10,14 @@ from .views import (
     MovieDetailView,
     MovieListView,
     RegisterView,
+    LoginView
 )
 
 urlpatterns = [
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/register/", RegisterView.as_view(), name="register"),
+    path("api/login", LoginView.as_view(), name="login"),
     path("api/movie_list", MovieDetailView.as_view(), name="movie-list"),
     path("api/movie_detail", MovieListView.as_view(), name="movie-detail"),
     path("api/category_create", AddCategory.as_view(), name="category-create"),
