@@ -109,7 +109,15 @@ class MovieDetailView(APIView):
     throttle_classes = [CustomMovieThrottle]
 
     def get(self, request, pk):
-        return Response({"message": f"Movie {pk} details"})
+        try:
+            movie = Movie.objects.get(pk=pk)
+            serializer = MovieSerializer(movie)
+            return Response(serializer.data)
+        except Movie.DoesNotExist:
+            return Response(
+                {"success": False, "detail": "Movie not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
 
 class AddCategory(APIView):
