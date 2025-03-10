@@ -79,6 +79,8 @@ class CreateCategoryCoverSerializer(serializers.Serializer):
 
     def validate_cover_base64(self, value):
         try:
+            if len(value) % 4 != 0:
+                raise serializers.ValidationError("Base64 string has invalid length.")
             base64.b64decode(value)
         except Exception:
             raise serializers.ValidationError("Invalid base64 content.")
