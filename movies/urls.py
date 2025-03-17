@@ -1,27 +1,25 @@
 from django.urls import path
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
 
 from .views import (
     AddCategory,
     AddCategoryCover,
+    AddMovie,
     CategoryList,
+    GetMovies,
     LoginView,
-    MovieDetailView,
-    MovieListView,
+    RateMovie,
     RegisterView,
+    movie_list,
 )
 
 urlpatterns = [
-    path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("register/", RegisterView.as_view(), name="register"),
-    path("login", LoginView.as_view(), name="login"),
-    path("movie_list", MovieListView.as_view(), name="movie-list"),
-    path("movie_detail/<int:pk>/", MovieDetailView.as_view(), name="movie-detail"),
-    path("category_create", AddCategory.as_view(), name="category-create"),
-    path("category_cover", AddCategoryCover.as_view(), name="category-cover"),
-    path("category_list", CategoryList.as_view(), name="category-list"),
+    path("login/", LoginView.as_view(), name="login"),
+    path("movie_add/", AddMovie.as_view(), name="add-movie"),
+    path("movie_list/", GetMovies.as_view(), name="movie-list"),
+    path("category_create/", AddCategory.as_view(), name="category-create"),
+    path("category_list/", CategoryList.as_view(), name="category-list"),
+    path("category_cover/", AddCategoryCover.as_view(), name="category-cover"),
+    path("movie_rate/", RateMovie.as_view(), name="movie-rate"),
+    path("", movie_list, name="movie-list"),
 ]

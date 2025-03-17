@@ -1,22 +1,34 @@
-from django.core.cache import cache
+from django.core.paginator import Paginator
 from django.db import transaction
+from django.shortcuts import get_object_or_404, render
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Category, CustomUser, Movie
+from .models import Category, CustomUser, Movie, Rating
 from .serializers import (
     CategorySerializer,
     CreateCategoryCoverSerializer,
     CreateCategorySerializer,
     LoginSerializer,
-    MovieSerializer,
+    MovieCreateSerializer,
+    MovieListSerializer,
+    RatingSerializer,
     RegisterSerializer,
 )
-from .throttles import CustomMovieThrottle
 from .utils import decode_and_upload_to_cloudinary
+
+
+def movie_list(request):
+    movies = Movie.objects.all().order_by("-popularity")
+    paginator = Paginator(movies, 8)
+
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "movies.html", {"movies": page_obj})
 
 
 class RegisterView(generics.CreateAPIView):
@@ -89,40 +101,41 @@ class LoginView(generics.GenericAPIView):
         )
 
 
-class MovieListView(APIView):
-    throttle_classes = [CustomMovieThrottle]
-
-    def get(self, request):
-        cache_key = "movie_list"
-        cached_data = cache.get(cache_key)
-
-        if cached_data:
-            return Response(cached_data)
-
-        movies = Movie.objects.all()
-        serializer = MovieSerializer(movies, many=True)
-        cache.set(cache_key, serializer.data, timeout=60)
-
-        return Response(serializer.data)
-
-
-class MovieDetailView(APIView):
-    throttle_classes = [CustomMovieThrottle]
-
-    def get(self, request, pk):
-        try:
-            movie = Movie.objects.get(pk=pk)
-            serializer = MovieSerializer(movie)
-            return Response(serializer.data)
-        except Movie.DoesNotExist:
+class AddMovie(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = MovieCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
             return Response(
-                {"success": False, "detail": "Movie not found."},
-                status=status.HTTP_404_NOT_FOUND,
+                {"success": True, "detail": "Movie added successfully."},
+                status=status.HTTP_201_CREATED,
             )
+        return Response(
+            {"success": False, "detail": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class GetMovies(APIView):
+    def get(self, request, *args, **kwargs):
+        movies = Movie.objects.all().order_by("-popularity")
+
+        # Sayfalama
+        page_number = request.query_params.get("page", 1)
+        paginator = Paginator(movies, per_page=10)
+        page_obj = paginator.get_page(page_number)
+
+        serializer = MovieListSerializer(
+            page_obj, many=True, context={"request": request}
+        )
+
+        response_data = {"page": page_obj.number, "results": serializer.data}
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class CategoryList(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
@@ -198,3 +211,55 @@ class AddCategoryCover(APIView):
                 {"success": False, "detail": "Invalid data."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class RateMovie(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        movie_id = request.data.get("movie")
+        score = request.data.get("score")
+
+        if not movie_id or not score:
+            return Response(
+                {"success": False, "detail": "Movie ID and score are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        movie_id = get_object_or_404(Movie, id=movie_id)
+        serializer = RatingSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"success": True, "detail": "Rating submitted successfully."},
+                status=status.HTTP_201_CREATED,
+            )
+        return Response(
+            {"success": False, "detail": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def delete(self, request, *args, **kwargs):
+        movie_id = request.data.get("movie")
+
+        if not movie_id:
+            return Response(
+                {"success": False, "detail": "Movie ID is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        movie = get_object_or_404(Movie, id=movie_id)
+        rating = Rating.objects.filter(user=request.user, movie=movie).first()
+
+        if rating:
+            rating.delete()
+            movie.update_ratings()
+            return Response(
+                {"success": True, "detail": "Rating removed successfully."},
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            {"success": False, "detail": "Rating not found."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
