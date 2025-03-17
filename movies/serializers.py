@@ -1,11 +1,13 @@
 import base64
 import logging
+
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from .utils import decode_and_upload_to_cloudinary
+
 from .models import Category, CustomUser, Movie, Rating
+from .utils import decode_and_upload_to_cloudinary
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -68,9 +70,18 @@ class MovieCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = [
-            "title", "original_title", "original_language", "overview", 
-            "release_date", "poster_path", "backdrop_path", "video", "adult", 
-            "categories", "poster_base64", "backdrop_base64"
+            "title",
+            "original_title",
+            "original_language",
+            "overview",
+            "release_date",
+            "poster_path",
+            "backdrop_path",
+            "video",
+            "adult",
+            "categories",
+            "poster_base64",
+            "backdrop_base64",
         ]
 
     def create(self, validated_data):
@@ -81,8 +92,12 @@ class MovieCreateSerializer(serializers.ModelSerializer):
         movie = Movie.objects.create(**validated_data)
 
         try:
-            movie.poster_path = decode_and_upload_to_cloudinary(poster_base64, "movies/posters", movie.title)
-            movie.backdrop_path = decode_and_upload_to_cloudinary(backdrop_base64, "movies/backdrops", movie.title)
+            movie.poster_path = decode_and_upload_to_cloudinary(
+                poster_base64, "movies/posters", movie.title
+            )
+            movie.backdrop_path = decode_and_upload_to_cloudinary(
+                backdrop_base64, "movies/backdrops", movie.title
+            )
             movie.save()
         except ValueError as e:
             movie.delete()
@@ -90,7 +105,7 @@ class MovieCreateSerializer(serializers.ModelSerializer):
 
         movie.categories.set(categories_data)
         return movie
-    
+
 
 class MovieListSerializer(serializers.ModelSerializer):
     genre_ids = serializers.SerializerMethodField()
@@ -99,9 +114,21 @@ class MovieListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = [
-            "adult", "backdrop_path", "genre_ids", "id", "original_language", 
-            "original_title", "overview", "popularity", "poster_path", 
-            "release_date", "title", "video", "vote_average", "vote_count", "rating"
+            "adult",
+            "backdrop_path",
+            "genre_ids",
+            "id",
+            "original_language",
+            "original_title",
+            "overview",
+            "popularity",
+            "poster_path",
+            "release_date",
+            "title",
+            "video",
+            "vote_average",
+            "vote_count",
+            "rating",
         ]
 
     def get_genre_ids(self, obj):
@@ -165,8 +192,7 @@ class RatingSerializer(serializers.ModelSerializer):
         score = validated_data["score"]
 
         rating, created = Rating.objects.update_or_create(
-            user=user, movie=movie,
-            defaults={"score": score}
+            user=user, movie=movie, defaults={"score": score}
         )
 
         movie.update_ratings()

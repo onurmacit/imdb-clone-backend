@@ -49,7 +49,7 @@ class CustomUser(AbstractBaseUser):
 class Movie(models.Model):
     title = models.CharField(max_length=255)
     original_title = models.CharField(max_length=255)
-    original_language = models.CharField(max_length=10, default='en')
+    original_language = models.CharField(max_length=10, default="en")
     overview = models.TextField()
     release_date = models.DateField()
     popularity = models.FloatField(default=0)
@@ -59,7 +59,7 @@ class Movie(models.Model):
     backdrop_path = models.URLField(blank=True, null=True)
     video = models.BooleanField(default=False)
     adult = models.BooleanField(default=False)
-    
+
     categories = models.ManyToManyField("Category", related_name="movies")
 
     def __str__(self):
@@ -90,7 +90,7 @@ class Rating(models.Model):
     score = models.IntegerField(default=1)
 
     class Meta:
-        unique_together = ("user", "movie")  
+        unique_together = ("user", "movie")
 
     def __str__(self):
         return f"{self.user.username} → {self.movie.title} ({self.score}/10)"

@@ -1,31 +1,30 @@
-from django.core.cache import cache
+from django.core.paginator import Paginator
 from django.db import transaction
+from django.shortcuts import get_object_or_404, render
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.shortcuts import get_object_or_404
+
 from .models import Category, CustomUser, Movie, Rating
 from .serializers import (
     CategorySerializer,
     CreateCategoryCoverSerializer,
     CreateCategorySerializer,
     LoginSerializer,
-    MovieListSerializer,
     MovieCreateSerializer,
-    RegisterSerializer,
+    MovieListSerializer,
     RatingSerializer,
+    RegisterSerializer,
 )
 from .utils import decode_and_upload_to_cloudinary
-from django.core.paginator import Paginator
-from django.shortcuts import render
 
 
 def movie_list(request):
     movies = Movie.objects.all().order_by("-popularity")
-    paginator = Paginator(movies, 8)  
-    
+    paginator = Paginator(movies, 8)
+
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
@@ -119,19 +118,18 @@ class AddMovie(APIView):
 
 class GetMovies(APIView):
     def get(self, request, *args, **kwargs):
-        movies = Movie.objects.all().order_by("-popularity")  
+        movies = Movie.objects.all().order_by("-popularity")
 
         # Sayfalama
         page_number = request.query_params.get("page", 1)
-        paginator = Paginator(movies, per_page=10)  
+        paginator = Paginator(movies, per_page=10)
         page_obj = paginator.get_page(page_number)
 
-        serializer = MovieListSerializer(page_obj, many=True, context={"request": request})
+        serializer = MovieListSerializer(
+            page_obj, many=True, context={"request": request}
+        )
 
-        response_data = {
-            "page": page_obj.number,
-            "results": serializer.data
-        }
+        response_data = {"page": page_obj.number, "results": serializer.data}
 
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -219,8 +217,8 @@ class RateMovie(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        movie_id = request.data.get('movie')  
-        score = request.data.get('score')
+        movie_id = request.data.get("movie")
+        score = request.data.get("score")
 
         if not movie_id or not score:
             return Response(
@@ -242,7 +240,7 @@ class RateMovie(APIView):
         )
 
     def delete(self, request, *args, **kwargs):
-        movie_id = request.data.get('movie')  
+        movie_id = request.data.get("movie")
 
         if not movie_id:
             return Response(
