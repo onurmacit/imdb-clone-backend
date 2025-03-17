@@ -1,10 +1,10 @@
 import base64
+import logging
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-import logging
 
 from .models import Category, CustomUser, Movie
 
@@ -79,7 +79,9 @@ class CreateCategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ["category_name"]
 
+
 logger = logging.getLogger(__name__)
+
 
 class CreateCategoryCoverSerializer(serializers.Serializer):
     category_id = serializers.IntegerField()
@@ -87,12 +89,12 @@ class CreateCategoryCoverSerializer(serializers.Serializer):
 
     def validate_cover_base64(self, value):
         try:
-            if value.startswith('data:image'):
-                value = value.split('base64,')[1]
-            
+            if value.startswith("data:image"):
+                value = value.split("base64,")[1]
+
             if len(value) % 4 != 0:
-                value += '=' * (4 - len(value) % 4)
-            
+                value += "=" * (4 - len(value) % 4)
+
             base64.b64decode(value)
         except Exception as e:
             logger.error(f"Base64 validation error: {e}")

@@ -8,12 +8,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import Category, CustomUser, Movie
 from .serializers import (
+    CategorySerializer,
     CreateCategoryCoverSerializer,
     CreateCategorySerializer,
     LoginSerializer,
     MovieSerializer,
     RegisterSerializer,
-    CategorySerializer,
 )
 from .throttles import CustomMovieThrottle
 from .utils import decode_and_upload_to_cloudinary
@@ -119,7 +119,7 @@ class MovieDetailView(APIView):
                 {"success": False, "detail": "Movie not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        
+
 
 class CategoryList(APIView):
     permission_classes = [IsAuthenticated]
@@ -132,7 +132,7 @@ class CategoryList(APIView):
         return Response(
             {
                 "success": True,
-                "detail": serializer.data,  
+                "detail": serializer.data,
             },
             status=status.HTTP_200_OK,
         )
@@ -174,9 +174,11 @@ class AddCategoryCover(APIView):
             cover_base64 = serializer.validated_data["cover_base64"]
             try:
                 category = Category.objects.get(id=category_id)
-                
-                cover_url = decode_and_upload_to_cloudinary(cover_base64, category.category_name)
-                
+
+                cover_url = decode_and_upload_to_cloudinary(
+                    cover_base64, category.category_name
+                )
+
                 category.cover_url = cover_url
                 category.save()
                 return Response(
@@ -196,4 +198,3 @@ class AddCategoryCover(APIView):
                 {"success": False, "detail": "Invalid data."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-

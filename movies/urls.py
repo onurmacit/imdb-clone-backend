@@ -7,11 +7,11 @@ from rest_framework_simplejwt.views import (
 from .views import (
     AddCategory,
     AddCategoryCover,
+    CategoryList,
     LoginView,
     MovieDetailView,
     MovieListView,
     RegisterView,
-    CategoryList,
 )
 
 urlpatterns = [
@@ -24,5 +24,4 @@ urlpatterns = [
     path("category_create", AddCategory.as_view(), name="category-create"),
     path("category_cover", AddCategoryCover.as_view(), name="category-cover"),
     path("category_list", CategoryList.as_view(), name="category-list"),
-
 ]
