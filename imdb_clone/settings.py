@@ -68,6 +68,8 @@ REST_FRAMEWORK = {
         "anon": "5/minute",
         "movie": "5/minute",
     },
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10, 
 }
 
 CACHES = {
@@ -106,7 +108,7 @@ ROOT_URLCONF = "imdb_clone.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        'DIRS': [BASE_DIR / 'templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
