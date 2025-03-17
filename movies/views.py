@@ -13,6 +13,7 @@ from .serializers import (
     LoginSerializer,
     MovieSerializer,
     RegisterSerializer,
+    CategorySerializer,
 )
 from .throttles import CustomMovieThrottle
 from .utils import decode_and_upload_to_cloudinary
@@ -118,6 +119,23 @@ class MovieDetailView(APIView):
                 {"success": False, "detail": "Movie not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
+        
+
+class CategoryList(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+
+        serializer = CategorySerializer(categories, many=True)
+
+        return Response(
+            {
+                "success": True,
+                "detail": serializer.data,  
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class AddCategory(APIView):
@@ -156,7 +174,9 @@ class AddCategoryCover(APIView):
             cover_base64 = serializer.validated_data["cover_base64"]
             try:
                 category = Category.objects.get(id=category_id)
-                cover_url = decode_and_upload_to_cloudinary(cover_base64)
+                
+                cover_url = decode_and_upload_to_cloudinary(cover_base64, category.category_name)
+                
                 category.cover_url = cover_url
                 category.save()
                 return Response(
@@ -176,3 +196,4 @@ class AddCategoryCover(APIView):
                 {"success": False, "detail": "Invalid data."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
