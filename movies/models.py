@@ -57,11 +57,11 @@ class Movie(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=255)
+    category_name = models.CharField(max_length=255)
     cover_url = CloudinaryField("category_covers", null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.category_name
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
