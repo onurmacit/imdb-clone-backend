@@ -1,0 +1,73 @@
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+.card:hover {
+    transform: scale(1.05); 
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); 
+}
+
+.btn {
+    width: 100%;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f5c518;
+    color: black;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn:hover {
+    background-color: #f1b800;
+    transform: translateY(-2px); 
+}
+
+h2 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: #f5c518;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #121212;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+.imdb-header {
+    background: url("https://res.cloudinary.com/dd8lad1yg/image/upload/background.jpg") no-repeat center center;
+    background-size: cover;
+    text-align: center;
+    padding: 60px 0;
+    position: relative;
+}
+
+.imdb-header::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 80px;
+    background: #f5c518;
+    border-radius: 10px;
+    z-index: 0;
+}
+
+.imdb-header span {
+    position: relative;
+    z-index: 1;
+    font-size: 4rem;
+    font-weight: 700;
+    color: black;
+    letter-spacing: 2px;
+}
