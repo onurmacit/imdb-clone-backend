@@ -48,12 +48,29 @@ class CustomUser(AbstractBaseUser):
 
 class Movie(models.Model):
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    original_title = models.CharField(max_length=255)
+    original_language = models.CharField(max_length=10, default='en')
+    overview = models.TextField()
     release_date = models.DateField()
-    rating = models.FloatField()
+    popularity = models.FloatField(default=0)
+    vote_average = models.FloatField(default=0)
+    vote_count = models.IntegerField(default=0)
+    poster_path = models.URLField(blank=True, null=True)
+    backdrop_path = models.URLField(blank=True, null=True)
+    video = models.BooleanField(default=False)
+    adult = models.BooleanField(default=False)
+    
+    categories = models.ManyToManyField("Category", related_name="movies")
 
     def __str__(self):
         return self.title
+
+    def update_ratings(self):
+        ratings = self.ratings.all()
+        self.vote_count = ratings.count()
+        self.vote_average = ratings.aggregate(models.Avg("score"))["score__avg"] or 0
+        self.popularity = (self.vote_average * self.vote_count) / (self.vote_count + 10)
+        self.save()
 
 
 class Category(models.Model):
@@ -65,3 +82,15 @@ class Category(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+
+
+class Rating(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    movie = models.ForeignKey("Movie", on_delete=models.CASCADE, related_name="ratings")
+    score = models.IntegerField(default=1)
+
+    class Meta:
+        unique_together = ("user", "movie")  
+
+    def __str__(self):
+        return f"{self.user.username} → {self.movie.title} ({self.score}/10)"
