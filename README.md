@@ -5,15 +5,18 @@
 ### A Django-based clone of IMDb with modern web technologies.
 
 ## Description
-This project is a clone of the IMDb website, built using Django for the backend. It leverages modern technologies such as Django Rest Framework, JWT Authentication, Redis, and Cloudinary for media storage. This repository includes a CI pipeline with GitHub Actions and linting rules for code quality assurance.
+This project is a clone of the IMDb website, built using Django for the backend. It leverages modern technologies such as Django Rest Framework, JWT Authentication, Redis, and Cloudinary for media storage. This repository includes a CI pipeline with GitHub Actions, linting rules for code quality assurance, pagination, and a dynamic frontend built with HTML, CSS, and JavaScript.
 
 ## Features
 
 - **JWT Authentication**: Users can register and authenticate using JWT.
 - **Rate Limiting**: Implemented throttling with `UserRateThrottle`, `AnonRateThrottle`, and custom throttling for movie endpoints.
+- **Pagination**: Pagination has been added for the movie list, enabling easy navigation through large amounts of movie data.
 - **Testing**: Comprehensive tests have been written for all features to ensure the functionality and reliability of the application.
 - **Dockerized Setup**: The project is containerized with Docker, making it easy to deploy and manage the application in any environment.
 - **CI with GitHub Actions**: Continuous integration is set up with GitHub Actions for linting, testing, and Docker-based workflows.
+- **Frontend Integration**: A dynamic frontend, displaying movie data including posters, titles, and ratings, using HTML, CSS, and JavaScript.
+- **Cloudinary Integration**: Media files, especially movie posters, are stored and served via Cloudinary.
 
 ## Technologies Used
 
@@ -29,6 +32,8 @@ This project is a clone of the IMDb website, built using Django for the backend.
 - Pytest for testing
 - Flake8 for linting
 - Black for code formatting
+- Bootstrap 5 for responsive design
+- JavaScript for frontend interactivity
 
 ## Setup Instructions
 
@@ -94,7 +99,12 @@ For detailed CI/CD configuration, you can refer to the `.github/workflows/ci.yml
 Currently, there is no deployment pipeline. This project is focused on the development and testing phase, with Dockerized local development and CI integration through GitHub Actions.
 
 ## Latest Changes
-The most recent update to the project includes integrating Cloudinary for handling media storage. Now, images can be uploaded and stored securely in Cloudinary, instead of being saved locally.
+- **Pagination Added:** The movie list now supports pagination, making it easier to navigate through large datasets.
+- **Movie and Rating Models:** The project now includes dedicated models for Movie and Rating with serializers for easy data handling.
+- **Frontend Updates:** HTML, CSS, and JavaScript files were added for a responsive frontend displaying movie information such as titles, ratings, and posters.
+- **Cloudinary Integration:** Cloudinary has been integrated for handling media uploads (movie posters) efficiently.
+- **Backend Improvements:** Enhanced movie list API and improved Cloudinary upload method for seamless media storage.
+
 
 ## Contributing
 Contributions are welcome! Please follow these steps:
