@@ -1,4 +1,5 @@
 import base64
+import logging
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
@@ -67,21 +68,35 @@ class MovieSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ["id", "category_name"]
+
+
 class CreateCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ["name"]
+        fields = ["category_name"]
+
+
+logger = logging.getLogger(__name__)
 
 
 class CreateCategoryCoverSerializer(serializers.Serializer):
-    category_id = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    category_id = serializers.IntegerField()
     cover_base64 = serializers.CharField()
 
     def validate_cover_base64(self, value):
         try:
+            if value.startswith("data:image"):
+                value = value.split("base64,")[1]
+
             if len(value) % 4 != 0:
-                raise serializers.ValidationError("Base64 string has invalid length.")
+                value += "=" * (4 - len(value) % 4)
+
             base64.b64decode(value)
-        except Exception:
+        except Exception as e:
+            logger.error(f"Base64 validation error: {e}")
             raise serializers.ValidationError("Invalid base64 content.")
         return value

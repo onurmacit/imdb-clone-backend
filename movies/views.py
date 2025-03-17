@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import Category, CustomUser, Movie
 from .serializers import (
+    CategorySerializer,
     CreateCategoryCoverSerializer,
     CreateCategorySerializer,
     LoginSerializer,
@@ -120,6 +121,23 @@ class MovieDetailView(APIView):
             )
 
 
+class CategoryList(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+
+        serializer = CategorySerializer(categories, many=True)
+
+        return Response(
+            {
+                "success": True,
+                "detail": serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
 class AddCategory(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CreateCategorySerializer
@@ -156,7 +174,11 @@ class AddCategoryCover(APIView):
             cover_base64 = serializer.validated_data["cover_base64"]
             try:
                 category = Category.objects.get(id=category_id)
-                cover_url = decode_and_upload_to_cloudinary(cover_base64)
+
+                cover_url = decode_and_upload_to_cloudinary(
+                    cover_base64, category.category_name
+                )
+
                 category.cover_url = cover_url
                 category.save()
                 return Response(
