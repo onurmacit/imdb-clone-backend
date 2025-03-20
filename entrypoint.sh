@@ -5,6 +5,9 @@ set -e
 echo "Waiting for database..."
 ./wait-for-it.sh $DB_HOST:$DB_PORT --timeout=30 --strict -- echo "Database is up!"
 
+echo "Creating migrations..."
+python manage.py makemigrations movies
+
 echo "Running migrations..."
 python manage.py migrate
 
