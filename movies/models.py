@@ -27,12 +27,16 @@ class CustomUser(AbstractBaseUser):
     last_name = models.CharField(max_length=30, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
 
     objects = CustomUserManager()
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
+
+    class Meta:
+        db_table = "movies_customuser"
 
     def clean(self):
 
@@ -44,6 +48,12 @@ class CustomUser(AbstractBaseUser):
 
     def __str__(self):
         return self.username
+
+    def has_perm(self, perm, obj=None):
+        return self.is_superuser
+
+    def has_module_perms(self, app_label):
+        return self.is_superuser
 
 
 class Movie(models.Model):
@@ -60,7 +70,14 @@ class Movie(models.Model):
     video = models.BooleanField(default=False)
     adult = models.BooleanField(default=False)
 
-    categories = models.ManyToManyField("Category", related_name="movies")
+    category = models.ForeignKey(
+        "Category",
+        related_name="movies",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        db_column="category_id",
+    )
 
     def __str__(self):
         return self.title
@@ -74,8 +91,12 @@ class Movie(models.Model):
 
 
 class Category(models.Model):
-    category_name = models.CharField(max_length=255)
+    category_name = models.CharField(max_length=255, unique=True)
     cover_url = CloudinaryField("category_covers", null=True, blank=True)
+
+    class Meta:
+        db_table = "movies_category"
+        verbose_name_plural = "categories"
 
     def __str__(self):
         return self.category_name
