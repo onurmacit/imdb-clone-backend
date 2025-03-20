@@ -36,7 +36,7 @@ class CustomUser(AbstractBaseUser):
     REQUIRED_FIELDS = ["username"]
 
     class Meta:
-        db_table = 'movies_customuser'
+        db_table = "movies_customuser"
 
     def clean(self):
 
@@ -71,12 +71,12 @@ class Movie(models.Model):
     adult = models.BooleanField(default=False)
 
     category = models.ForeignKey(
-        "Category", 
-        related_name="movies", 
+        "Category",
+        related_name="movies",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        db_column='category_id'
+        db_column="category_id",
     )
 
     def __str__(self):
@@ -95,8 +95,8 @@ class Category(models.Model):
     cover_url = CloudinaryField("category_covers", null=True, blank=True)
 
     class Meta:
-        db_table = 'movies_category'
-        verbose_name_plural = 'categories'
+        db_table = "movies_category"
+        verbose_name_plural = "categories"
 
     def __str__(self):
         return self.category_name
