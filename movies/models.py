@@ -82,7 +82,9 @@ class Movie(models.Model):
     def update_ratings(self):
         ratings = self.ratings.all()
         self.vote_count = ratings.count()
-        self.vote_average = round(ratings.aggregate(models.Avg("score"))["score__avg"] or 0, 2)
+        self.vote_average = round(
+            ratings.aggregate(models.Avg("score"))["score__avg"] or 0, 2
+        )
         self.popularity = (self.vote_average * self.vote_count) / (self.vote_count + 10)
         self.save()
 

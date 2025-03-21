@@ -189,11 +189,11 @@ class AddCategoryCover(APIView):
                 category = Category.objects.get(id=category_id)
 
                 file_name = f"category_{category.id}_{category.category_name}"
-                
+
                 cover_url = decode_and_upload_to_cloudinary(
                     base64_str=cover_base64,
-                    folder_name="category_covers",  
-                    file_name=file_name  
+                    folder_name="category_covers",
+                    file_name=file_name,
                 )
 
                 category.cover_url = cover_url

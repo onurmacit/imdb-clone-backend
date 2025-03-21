@@ -66,9 +66,7 @@ class MovieCreateSerializer(serializers.ModelSerializer):
     poster_base64 = serializers.CharField(write_only=True, required=False)
     backdrop_base64 = serializers.CharField(write_only=True, required=False)
     categories = serializers.PrimaryKeyRelatedField(
-        many=True,
-        queryset=Category.objects.all(),
-        required=False
+        many=True, queryset=Category.objects.all(), required=False
     )
 
     class Meta:
@@ -89,12 +87,12 @@ class MovieCreateSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        categories_data = validated_data.pop('categories', [])
+        categories_data = validated_data.pop("categories", [])
         poster_base64 = validated_data.pop("poster_base64", None)
         backdrop_base64 = validated_data.pop("backdrop_base64", None)
 
         movie = Movie.objects.create(**validated_data)
-        
+
         if categories_data:
             movie.categories.set(categories_data)
 
@@ -103,13 +101,13 @@ class MovieCreateSerializer(serializers.ModelSerializer):
                 movie.poster_path = decode_and_upload_to_cloudinary(
                     base64_str=poster_base64,
                     folder_name="movies/posters",
-                    file_name=f"movie_{movie.id}_poster"
+                    file_name=f"movie_{movie.id}_poster",
                 )
             if backdrop_base64:
                 movie.backdrop_path = decode_and_upload_to_cloudinary(
                     base64_str=backdrop_base64,
                     folder_name="movies/backdrops",
-                    file_name=f"movie_{movie.id}_backdrop"
+                    file_name=f"movie_{movie.id}_backdrop",
                 )
             movie.save()
         except ValueError as e:
@@ -117,7 +115,7 @@ class MovieCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(str(e))
 
         return movie
-    
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
