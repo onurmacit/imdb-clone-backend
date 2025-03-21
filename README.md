@@ -2,40 +2,69 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-### A Django-based clone of IMDb with modern web technologies.
+### A Modern IMDb Clone with Django & React (Work in Progress)
 
 ![localhost](./images/imdb_clone.png)
 
+## Project Status: Actively Developing 🚧
+
+This project is currently under active development. We're building a backend-focused, feature-rich IMDb clone that showcases best practices in backend development. The frontend is designed to complement the backend with a clean and polished interface. New features and improvements are being added regularly.
+
+### Current Development Focus:
+- Enhancing the movie rating system
+- Implementing user reviews and comments
+- Adding advanced search and filtering capabilities
+- Improving the user interface and experience
+- Implementing real-time updates using WebSockets
+
 ## Description
-This project is a clone of the IMDb website, built using Django for the backend. It leverages modern technologies such as Django Rest Framework, JWT Authentication, Redis, and Cloudinary for media storage. This repository includes a CI pipeline with GitHub Actions, linting rules for code quality assurance, pagination, and a dynamic frontend built with HTML, CSS, and JavaScript.
+This is a modern IMDb clone built with Django and Django Rest Framework, featuring a robust backend API and a responsive frontend. The project showcases modern web development practices, including containerization, CI/CD, and cloud integration.
 
-## Features
+## Key Features
 
-- **JWT Authentication**: Users can register and authenticate using JWT.
-- **Rate Limiting**: Implemented throttling with `UserRateThrottle`, `AnonRateThrottle`, and custom throttling for movie endpoints.
-- **Pagination**: Pagination has been added for the movie list, enabling easy navigation through large amounts of movie data.
-- **Testing**: Comprehensive tests have been written for all features to ensure the functionality and reliability of the application.
-- **Dockerized Setup**: The project is containerized with Docker, making it easy to deploy and manage the application in any environment.
-- **CI with GitHub Actions**: Continuous integration is set up with GitHub Actions for linting, testing, and Docker-based workflows.
-- **Frontend Integration**: A dynamic frontend, displaying movie data including posters, titles, and ratings, using HTML, CSS, and JavaScript.
-- **Cloudinary Integration**: Media files, especially movie posters, are stored and served via Cloudinary.
+- **Authentication & Authorization**
+  - JWT-based authentication system
+  - Custom user model with email-based authentication
+  - Role-based access control
 
-## Technologies Used
+- **Movie Management**
+  - Comprehensive movie information storage
+  - Multiple category support for each movie
+  - Advanced rating system
+  - Image handling with Cloudinary integration
 
+- **Performance & Scaling**
+  - Redis caching for improved performance
+  - Rate limiting and throttling
+  - Asynchronous task processing with Celery
+  - Containerized with Docker for easy scaling
+
+- **Security & Quality**
+  - Comprehensive test coverage
+  - CI/CD pipeline with GitHub Actions
+  - Code quality enforcement with linting
+  - Secure media handling with Cloudinary
+
+## Tech Stack
+
+### Backend
+- Python 3.9
 - Django 4.2
-- Django Rest Framework
+- Django REST Framework
 - PostgreSQL
 - Redis
-- Celery for asynchronous tasks
+- Celery
 - JWT Authentication
-- Cloudinary for media storage
-- Docker
-- GitHub Actions for CI
+
+### Storage & Caching
+- Cloudinary (Media Storage)
+- Redis (Caching & Message Broker)
+
+### DevOps & Tools
+- Docker & Docker Compose
+- GitHub Actions
+- Flake8, Black, and isort for code quality
 - Pytest for testing
-- Flake8 for linting
-- Black for code formatting
-- Bootstrap 5 for responsive design
-- JavaScript for frontend interactivity
 
 ## Setup Instructions
 
@@ -101,18 +130,46 @@ For detailed CI/CD configuration, you can refer to the `.github/workflows/ci.yml
 Currently, there is no deployment pipeline. This project is focused on the development and testing phase, with Dockerized local development and CI integration through GitHub Actions.
 
 ## Latest Changes
-- **Pagination Added:** The movie list now supports pagination, making it easier to navigate through large datasets.
-- **Movie and Rating Models:** The project now includes dedicated models for Movie and Rating with serializers for easy data handling.
-- **Frontend Updates:** HTML, CSS, and JavaScript files were added for a responsive frontend displaying movie information such as titles, ratings, and posters.
-- **Cloudinary Integration:** Cloudinary has been integrated for handling media uploads (movie posters) efficiently.
-- **Backend Improvements:** Enhanced movie list API and improved Cloudinary upload method for seamless media storage.
+The most recent update to the project includes integrating Cloudinary for handling media storage. Now, images can be uploaded and stored securely in Cloudinary, instead of being saved locally.
 
+## Roadmap 🗺️
+
+### Phase 1 (Current)
+- ✅ Basic movie CRUD operations
+- ✅ User authentication
+- ✅ Category management
+- ✅ Rating system
+- 🚧 User reviews and comments
+- 🚧 Advanced search functionality
+
+### Phase 2 (Upcoming)
+- 📝 Watchlist feature
+- 📝 User recommendations
+- 📝 Social features (following, sharing)
+- 📝 Advanced analytics
+- 📝 Performance optimizations
+
+### Phase 3 (Planned)
+- 📝 Mobile app integration
+- 📝 Real-time notifications
+- 📝 AI-powered recommendations
+- 📝 Content moderation system
 
 ## Contributing
-Contributions are welcome! Please follow these steps:
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix.
-3. Submit a pull request with a detailed description of your changes.
+
+We welcome contributions! Whether you're fixing bugs, adding features, or improving documentation, your help is appreciated. Please check our [Contributing Guidelines](CONTRIBUTING.md) for more details.
+
+### How to Contribute
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+- IMDb for inspiration
+- Django community for excellent documentation
+- All contributors who help improve this project
