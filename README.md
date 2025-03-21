@@ -2,23 +2,23 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-### A Modern IMDb Clone with Django & React (Work in Progress)
+### A Modern IMDb Clone with Django and Server-Side Rendering 
 
 ![localhost](./images/imdb_clone.png)
 
 ## Project Status: Actively Developing 🚧
 
-This project is currently under active development. We're building a backend-focused, feature-rich IMDb clone that showcases best practices in backend development. The frontend is designed to complement the backend with a clean and polished interface. New features and improvements are being added regularly.
+This project is currently under active development, focusing on building a robust movie database platform with Django. The backend is designed with best practices and modern architecture, while the frontend utilizes Django templates with dynamic JavaScript enhancements.
 
 ### Current Development Focus:
 - Enhancing the movie rating system
 - Implementing user reviews and comments
 - Adding advanced search and filtering capabilities
-- Improving the user interface and experience
-- Implementing real-time updates using WebSockets
+- Optimizing server-side rendering performance
+- Implementing category-based movie browsing
 
 ## Description
-This is a modern IMDb clone built with Django and Django Rest Framework, featuring a robust backend API and a responsive frontend. The project showcases modern web development practices, including containerization, CI/CD, and cloud integration.
+This is a modern IMDb clone built with Django and Django Rest Framework, featuring a robust backend API and server-side rendered frontend. The project demonstrates modern web development practices including containerization, CI/CD, and cloud integration, with a focus on performance and scalability.
 
 ## Key Features
 
@@ -30,8 +30,14 @@ This is a modern IMDb clone built with Django and Django Rest Framework, featuri
 - **Movie Management**
   - Comprehensive movie information storage
   - Multiple category support for each movie
-  - Advanced rating system
-  - Image handling with Cloudinary integration
+  - Advanced rating system with user scores
+  - Cloud-based image handling with Cloudinary
+
+- **Frontend Features**
+  - Server-side rendering with Django Templates
+  - Dynamic content loading with vanilla JavaScript
+  - Responsive design with Bootstrap
+  - Modern UI with CSS animations
 
 - **Performance & Scaling**
   - Redis caching for improved performance
@@ -55,6 +61,12 @@ This is a modern IMDb clone built with Django and Django Rest Framework, featuri
 - Redis
 - Celery
 - JWT Authentication
+
+### Frontend
+- Django Templates
+- Bootstrap 5
+- Vanilla JavaScript
+- CSS3 with modern features
 
 ### Storage & Caching
 - Cloudinary (Media Storage)
@@ -136,24 +148,32 @@ The most recent update to the project includes integrating Cloudinary for handli
 
 ### Phase 1 (Current)
 - ✅ Basic movie CRUD operations
-- ✅ User authentication
-- ✅ Category management
-- ✅ Rating system
+- ✅ User authentication with JWT
+- ✅ Category management system
+- ✅ Rating system implementation
 - 🚧 User reviews and comments
 - 🚧 Advanced search functionality
 
 ### Phase 2 (Upcoming)
-- 📝 Watchlist feature
-- 📝 User recommendations
-- 📝 Social features (following, sharing)
-- 📝 Advanced analytics
+- 📝 Movie watchlist feature
+- 📝 Personalized recommendations
+- 📝 Enhanced category filtering
 - 📝 Performance optimizations
+- 📝 User profile customization
 
 ### Phase 3 (Planned)
-- 📝 Mobile app integration
-- 📝 Real-time notifications
-- 📝 AI-powered recommendations
-- 📝 Content moderation system
+- 📝 Email notification system
+- 📝 Advanced caching strategies
+- 📝 Admin dashboard improvements
+- 📝 Content moderation tools
+
+## Features in Development
+
+- **Enhanced Search**: Implementing advanced search functionality with filters
+- **User Profiles**: Adding detailed user profiles with watching history
+- **Category System**: Improving the movie categorization system
+- **Performance**: Implementing additional caching strategies
+- **UI Improvements**: Enhancing the user interface with modern design patterns
 
 ## Contributing
 
