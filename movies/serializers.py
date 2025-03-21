@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+
 from .models import Category, CustomUser, Movie, Rating
 from .utils import decode_and_upload_to_cloudinary
 
