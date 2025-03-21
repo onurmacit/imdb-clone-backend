@@ -64,8 +64,11 @@ class LoginSerializer(serializers.Serializer):
 
 
 class MovieCreateSerializer(serializers.ModelSerializer):
-    poster_base64 = serializers.CharField(write_only=True)
-    backdrop_base64 = serializers.CharField(write_only=True)
+    poster_base64 = serializers.CharField(write_only=True, required=False)
+    backdrop_base64 = serializers.CharField(write_only=True, required=False)
+    categories = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Category.objects.all(), required=False
+    )
 
     class Meta:
         model = Movie
@@ -86,25 +89,39 @@ class MovieCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         categories_data = validated_data.pop("categories", [])
-        poster_base64 = validated_data.pop("poster_base64")
-        backdrop_base64 = validated_data.pop("backdrop_base64")
+        poster_base64 = validated_data.pop("poster_base64", None)
+        backdrop_base64 = validated_data.pop("backdrop_base64", None)
 
         movie = Movie.objects.create(**validated_data)
 
+        if categories_data:
+            movie.categories.set(categories_data)
+
         try:
-            movie.poster_path = decode_and_upload_to_cloudinary(
-                poster_base64, "movies/posters", movie.title
-            )
-            movie.backdrop_path = decode_and_upload_to_cloudinary(
-                backdrop_base64, "movies/backdrops", movie.title
-            )
+            if poster_base64:
+                movie.poster_path = decode_and_upload_to_cloudinary(
+                    base64_str=poster_base64,
+                    folder_name="movies/posters",
+                    file_name=f"movie_{movie.id}_poster",
+                )
+            if backdrop_base64:
+                movie.backdrop_path = decode_and_upload_to_cloudinary(
+                    base64_str=backdrop_base64,
+                    folder_name="movies/backdrops",
+                    file_name=f"movie_{movie.id}_backdrop",
+                )
             movie.save()
         except ValueError as e:
             movie.delete()
             raise serializers.ValidationError(str(e))
 
-        movie.categories.set(categories_data)
         return movie
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ["id", "category_name"]
 
 
 class MovieListSerializer(serializers.ModelSerializer):
@@ -141,11 +158,10 @@ class MovieListSerializer(serializers.ModelSerializer):
             return rating.score if rating else 0
         return 0
 
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = ["id", "category_name"]
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["vote_average"] = round(representation["vote_average"], 2)
+        return representation
 
 
 class CreateCategorySerializer(serializers.ModelSerializer):
@@ -190,6 +206,8 @@ class RatingSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         movie = validated_data["movie"]
         score = validated_data["score"]
+
+        score = round(score, 2)
 
         rating, created = Rating.objects.update_or_create(
             user=user, movie=movie, defaults={"score": score}
