@@ -188,8 +188,12 @@ class AddCategoryCover(APIView):
             try:
                 category = Category.objects.get(id=category_id)
 
+                file_name = f"category_{category.id}_{category.category_name}"
+                
                 cover_url = decode_and_upload_to_cloudinary(
-                    cover_base64, category.category_name
+                    base64_str=cover_base64,
+                    folder_name="category_covers",  
+                    file_name=file_name  
                 )
 
                 category.cover_url = cover_url
@@ -205,6 +209,11 @@ class AddCategoryCover(APIView):
                 return Response(
                     {"success": False, "detail": "Category not found."},
                     status=status.HTTP_404_NOT_FOUND,
+                )
+            except ValueError as e:
+                return Response(
+                    {"success": False, "detail": str(e)},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
         else:
             return Response(
