@@ -70,13 +70,10 @@ class Movie(models.Model):
     video = models.BooleanField(default=False)
     adult = models.BooleanField(default=False)
 
-    category = models.ForeignKey(
+    categories = models.ManyToManyField(
         "Category",
         related_name="movies",
-        on_delete=models.CASCADE,
-        null=True,
         blank=True,
-        db_column="category_id",
     )
 
     def __str__(self):
@@ -85,7 +82,7 @@ class Movie(models.Model):
     def update_ratings(self):
         ratings = self.ratings.all()
         self.vote_count = ratings.count()
-        self.vote_average = ratings.aggregate(models.Avg("score"))["score__avg"] or 0
+        self.vote_average = round(ratings.aggregate(models.Avg("score"))["score__avg"] or 0, 2)
         self.popularity = (self.vote_average * self.vote_count) / (self.vote_count + 10)
         self.save()
 
