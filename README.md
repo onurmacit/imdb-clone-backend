@@ -4,6 +4,8 @@
 
 ### A Django-based clone of IMDb with modern web technologies.
 
+![localhost](./images/Screenshot 2025-03-21 at 04.39.42.png)
+
 ## Description
 This project is a clone of the IMDb website, built using Django for the backend. It leverages modern technologies such as Django Rest Framework, JWT Authentication, Redis, and Cloudinary for media storage. This repository includes a CI pipeline with GitHub Actions, linting rules for code quality assurance, pagination, and a dynamic frontend built with HTML, CSS, and JavaScript.
 
