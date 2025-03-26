@@ -120,7 +120,6 @@ class GetMovies(APIView):
     def get(self, request, *args, **kwargs):
         movies = Movie.objects.all().order_by("-popularity")
 
-        # Sayfalama
         page_number = request.query_params.get("page", 1)
         paginator = Paginator(movies, per_page=10)
         page_obj = paginator.get_page(page_number)

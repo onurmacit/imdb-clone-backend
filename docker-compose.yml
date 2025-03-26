@@ -1,4 +1,3 @@
-
 services:
   web:
     build: .
@@ -56,7 +55,7 @@ services:
   celery:
     build: .
     entrypoint: ["/app/entrypoint.sh"]
-    command: ["celery", "-A", "imdb_clone", "worker", "--loglevel=info"]
+    command: ["celery"]
     env_file:
       - .env
     networks:
